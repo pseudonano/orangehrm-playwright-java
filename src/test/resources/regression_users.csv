@@ -1,0 +1,4 @@
+username,password,expected
+Admin,admin123,success
+John,Password1,invalid
+Jane,,empty
