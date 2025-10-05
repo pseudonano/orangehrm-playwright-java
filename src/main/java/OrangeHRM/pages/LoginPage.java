@@ -5,6 +5,7 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.setDefaultAssertionTimeout;
 
 public class LoginPage {
     private final Page page;
@@ -29,6 +30,7 @@ public class LoginPage {
     public void assertSuccessfulLogin(){
         page.waitForURL("**/dashboard/**");
         assertThat(page).hasTitle("OrangeHRM");
+        assertThat(page.locator(".oxd-userdropdown-tab")).isVisible(); // TO-DO: extract locator to diff file or whatever
     }
 
     public void assertInvalidLogin(){
