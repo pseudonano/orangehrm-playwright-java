@@ -2,7 +2,12 @@ package OrangeHRM.base;
 
 import OrangeHRM.utils.ConfigReader;
 import com.microsoft.playwright.*;
+import com.microsoft.playwright.options.WaitUntilState;
 import org.junit.jupiter.api.*;
+
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class BaseTest {
     protected static Playwright playwright;
@@ -31,12 +36,18 @@ public class BaseTest {
     @BeforeEach
     void setUp(){
         context = browser.newContext();
+        context.tracing().start(new Tracing.StartOptions().setSnapshots(true).setSources(true).setScreenshots(true));
+
         page = context.newPage();
-        page.navigate(ConfigReader.get("baseUrl"));
+        page.navigate(ConfigReader.get("baseUrl"),new Page.NavigateOptions().setWaitUntil(WaitUntilState.DOMCONTENTLOADED));
     }
 
     @AfterEach
-    void tearDown(){
+    void tearDown(TestInfo testInfo){
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String name = testInfo.getDisplayName().replaceAll("[^a-zA-Z0-9-_]", "_");
+        context.tracing().stop(new Tracing.StopOptions()
+                .setPath(Paths.get("traces/" + name + "_" + timestamp + ".zip")));
         context.close();
     }
 
